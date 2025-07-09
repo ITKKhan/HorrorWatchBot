@@ -1,0 +1,46 @@
+{
+  "Horror": [
+    {
+      "title": "The Thing (1982)",
+      "year": "Unknown Year",
+      "genre": "Unknown Genre",
+      "poster": "N/A",
+      "added_by": "Unknown"
+    },
+    {
+      "title": "The Witch",
+      "year": "2015",
+      "genre": "Drama, Fantasy, Horror",
+      "poster": "https://m.media-amazon.com/images/M/MV5BMTUyNzkwMzAxOF5BMl5BanBnXkFtZTgwMzc1OTk1NjE@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Barbarian",
+      "year": "2022",
+      "genre": "Horror, Mystery, Thriller",
+      "poster": "https://m.media-amazon.com/images/M/MV5BNWQ5MDgwMzMtNWZhMy00Y2Q4LWI5NTAtODA4MDIzYTExOGQzXkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "The Thing",
+      "year": "1982",
+      "genre": "Horror, Mystery, Sci-Fi",
+      "poster": "https://m.media-amazon.com/images/M/MV5BYTA3NDU5MWEtNTk4Yy00ZDNkLThmZTQtMjU3ZGVhYzAyMzU4XkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Aliens",
+      "year": "1986",
+      "genre": "Action, Adventure, Horror",
+      "poster": "https://m.media-amazon.com/images/M/MV5BZjIyNGJhYzYtN2I1My00OTVhLWEyMzItZTVjNDMzOTVkYWViXkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "The Babadook",
+      "year": "2014",
+      "genre": "Drama, Horror, Mystery",
+      "poster": "https://m.media-amazon.com/images/M/MV5BMTk0NzMzODc2NF5BMl5BanBnXkFtZTgwOTYzNTM1MzE@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    }
+  ]
+}
