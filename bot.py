@@ -14,7 +14,7 @@ WATCHPARTY_FILE = "categories.json"
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix=None, intents=intents)
+bot = commands.Bot(command_prefix="/", intents=intents)
 
 #Helper Functions 
 def load_watchparties():
@@ -45,6 +45,29 @@ async def on_ready():
     print("🔥 on_ready fired!")
     synced = await bot.tree.sync()
     print(f"✅ Synced {len(synced)} slash command(s): {[cmd.name for cmd in synced]}")
+
+# Mention-Handling Code for Discord Bot to handle @ request to explain functionality
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    # If bot is mentioned directly
+    if bot.user in message.mentions:
+        await message.channel.send(
+            f"👋 Hey **{message.author.display_name}**! I’m HorrorWatchBot 🎃, your watchparty companion.\n\n"
+            f"Here’s what I can do:\n"
+            f"• ➕ `/add_movie` to add films to your watchparty\n"
+            f"• 📊 `/list_top10` to see the latest additions\n"
+            f"• 🍿 More coming soon: ratings, suggestions, polls, and schedules!\n\n"
+            f"Try typing `/` to view all commands or ask me what’s playing!"
+        )
+        await message.add_reaction("🎥")
+   
+    if message.content.startswith("/"):
+        return
+
+    await bot.process_commands(message)
 
 # Discord Auto complete Command for Showing Top 10 Movie List
 @bot.tree.command(name="list_top10", description="List the top 10 recent movies from a Watchparty 🎥")
@@ -139,6 +162,55 @@ async def slash_add_movie(interaction: discord.Interaction, watchparty: str, mov
 # Discord Auto complete Command for Watchparty Add Movies
 @slash_add_movie.autocomplete("watchparty")
 async def autocomplete_watchparty(interaction: discord.Interaction, current: str):
+    return [
+        app_commands.Choice(name=wp, value=wp)
+        for wp in load_watchparties() if current.lower() in wp.lower()
+    ]
+
+# Remove Movie from List. Admin can remove all, where basic users remove ones they added. 
+@bot.tree.command(name="remove_movie", description="Remove a movie you've added, or others if you're an admin 🗑️")
+@app_commands.describe(
+    watchparty="Select a watchparty category",
+    movie_title="Enter the title of the movie to remove"
+)
+async def remove_movie(interaction: discord.Interaction, watchparty: str, movie_title: str):
+    await interaction.response.defer(thinking=True)
+
+    db = load_movie_db()
+
+    if watchparty not in db:
+        await interaction.followup.send(f"❌ Watchparty '{watchparty}' doesn't exist.")
+        return
+
+    user_name = interaction.user.name
+    is_admin = interaction.user.guild_permissions.administrator
+
+    # Look for matching titles
+    matches = [
+        m for m in db[watchparty]
+        if m.get("title", "").lower().strip() == movie_title.lower().strip()
+        and (m.get("added_by") == user_name or is_admin)
+    ]
+
+    if not matches:
+        await interaction.followup.send(
+            f"🙅 No removable matches found for '{movie_title}' in **{watchparty}**."
+        )
+        return
+
+    # Remove matches
+    db[watchparty] = [m for m in db[watchparty] if m not in matches]
+    save_movie_db(db)
+
+    # Feedback
+    removed_titles = ", ".join([f"**{m['title']}** ({m['year']})" for m in matches])
+    await interaction.followup.send(
+        f"🗑️ Removed {len(matches)} movie(s) from **{watchparty}**:\n{removed_titles}"
+    )
+
+# Discord Auto complete Command for Watchparty Remove Movies
+@remove_movie.autocomplete("watchparty")
+async def autocomplete_watchparty_remove(interaction: discord.Interaction, current: str):
     return [
         app_commands.Choice(name=wp, value=wp)
         for wp in load_watchparties() if current.lower() in wp.lower()

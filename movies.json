@@ -90,6 +90,22 @@
       "genre": "Horror",
       "poster": "https://m.media-amazon.com/images/M/MV5BZGZmOTZjNzUtOTE4OS00OGM3LWJiNGEtZjk4Yzg2M2Q1YzYxXkEyXkFqcGc@._V1_SX300.jpg",
       "added_by": "itk_khan"
+    },
+    {
+      "title": "Sinners",
+      "year": "2025",
+      "genre": "Action, Drama, Horror",
+      "poster": "https://m.media-amazon.com/images/M/MV5BNjIwZWY4ZDEtMmIxZS00NDA4LTg4ZGMtMzUwZTYyNzgxMzk5XkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    }
+  ],
+  "Anime": [
+    {
+      "title": "Tokyo Ghoul",
+      "year": "2014",
+      "genre": "Animation, Action, Drama",
+      "poster": "https://m.media-amazon.com/images/M/MV5BZWI2NzZhMTItOTM3OS00NjcyLThmN2EtZGZjMjlhYWMwODMzXkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
     }
   ]
 }
