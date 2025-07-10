@@ -1,13 +1,6 @@
 {
   "Horror": [
     {
-      "title": "The Thing (1982)",
-      "year": "Unknown Year",
-      "genre": "Unknown Genre",
-      "poster": "N/A",
-      "added_by": "Unknown"
-    },
-    {
       "title": "The Witch",
       "year": "2015",
       "genre": "Drama, Fantasy, Horror",
@@ -40,6 +33,62 @@
       "year": "2014",
       "genre": "Drama, Horror, Mystery",
       "poster": "https://m.media-amazon.com/images/M/MV5BMTk0NzMzODc2NF5BMl5BanBnXkFtZTgwOTYzNTM1MzE@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "They Live",
+      "year": "1988",
+      "genre": "Action, Horror, Sci-Fi",
+      "poster": "https://m.media-amazon.com/images/M/MV5BMTQ3MjM3ODU1NV5BMl5BanBnXkFtZTgwMjU3NDU2MTE@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Alien",
+      "year": "1979",
+      "genre": "Horror, Sci-Fi",
+      "poster": "https://m.media-amazon.com/images/M/MV5BN2NhMDk2MmEtZDQzOC00MmY5LThhYzAtMDdjZGFjOGZjMjdjXkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "It Follows",
+      "year": "2014",
+      "genre": "Horror, Mystery, Thriller",
+      "poster": "https://m.media-amazon.com/images/M/MV5BNGZiYWRiYjAtODU0NS00YzAzLTk2MzQtZGVlMzVjM2M3MGQ3XkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Night Shift",
+      "year": "1982",
+      "genre": "Comedy",
+      "poster": "https://m.media-amazon.com/images/M/MV5BNzNlNTYwN2EtNWY5OC00ZmU2LWE4MGEtYjYxMDZiNjcxMWE3XkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Please Don't Feed the Children",
+      "year": "2024",
+      "genre": "Horror, Thriller",
+      "poster": "https://m.media-amazon.com/images/M/MV5BZTEyMTMzZmUtOWU0NS00MzRhLWFjNzAtYzIzMTk3YTcxZjhhXkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Untitled",
+      "year": "Unknown",
+      "genre": "Unknown",
+      "poster": "N/A",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Night Shift",
+      "year": "2023",
+      "genre": "Horror, Thriller",
+      "poster": "https://m.media-amazon.com/images/M/MV5BODE1NzhiYTItNDQ4MC00ZDUwLThjNWUtYjBkYWVmZWMwMzQ0XkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "It",
+      "year": "2017",
+      "genre": "Horror",
+      "poster": "https://m.media-amazon.com/images/M/MV5BZGZmOTZjNzUtOTE4OS00OGM3LWJiNGEtZjk4Yzg2M2Q1YzYxXkEyXkFqcGc@._V1_SX300.jpg",
       "added_by": "itk_khan"
     }
   ]

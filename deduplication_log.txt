@@ -1,0 +1,9 @@
+
+--- Deduplication Run: 2025-07-09 17:11:48 by inthe ---
+Removed 0 duplicate(s) and 4 invalid movie(s).
+
+❌ Invalid Movies Removed:
+ - [Horror] The Glitch (Unknown) — missing or malformed fields
+ - [Horror] 404: Not Found () — missing or malformed fields
+ - [Horror]  (2020) — missing or malformed fields
+ - [Horror] The Thing (1982) (Unknown) — missing or malformed fields

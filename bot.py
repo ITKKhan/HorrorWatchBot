@@ -1,152 +1,182 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
-import json
-import os
-import requests               # 🔍 Used to contact the OMDb API
+import json, os, requests, asyncio
 from dotenv import load_dotenv
 
-# 🔐 Load environment variables
+#Environment and Setup
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 OMDB_API_KEY = os.getenv("OMDB_API_KEY")
 
+MOVIE_DB_FILE = "movies.json"
+WATCHPARTY_FILE = "categories.json"
+
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix="/", intents=intents)
+bot = commands.Bot(command_prefix=None, intents=intents)
 
-MOVIE_DB_FILE = "movies.json"
-if not os.path.exists(MOVIE_DB_FILE):
+#Helper Functions 
+def load_watchparties():
+    if not os.path.exists(WATCHPARTY_FILE):
+        with open(WATCHPARTY_FILE, "w") as f:
+            json.dump(["Horror", "Anime", "SciFi"], f)
+    with open(WATCHPARTY_FILE, "r") as f:
+        return json.load(f)
+
+def save_watchparties(watchparties):
+    with open(WATCHPARTY_FILE, "w") as f:
+        json.dump(watchparties, f, indent=2)
+
+def load_movie_db():
+    if not os.path.exists(MOVIE_DB_FILE):
+        with open(MOVIE_DB_FILE, "w") as f:
+            json.dump({}, f)
+    with open(MOVIE_DB_FILE, "r") as f:
+        return json.load(f)
+
+def save_movie_db(db):
     with open(MOVIE_DB_FILE, "w") as f:
-        json.dump([], f)
+        json.dump(db, f, indent=2)
 
+# On Ready Event
 @bot.event
 async def on_ready():
-    print(f"{bot.user} is channeling horror metadata... 👁️📼")
+    print("🔥 on_ready fired!")
+    synced = await bot.tree.sync()
+    print(f"✅ Synced {len(synced)} slash command(s): {[cmd.name for cmd in synced]}")
 
-# 🎬 Multi-step add_movie flow: ask for category first, then title
-@bot.command(name="add_movie")
-async def add_movie(ctx):
-    """
-    Step 1: Ask for category
-    Step 2: Ask for movie title
-    Step 3: Fetch metadata and save under category
-    """
+# Discord Auto complete Command for Showing Top 10 Movie List
+@bot.tree.command(name="list_top10", description="List the top 10 recent movies from a Watchparty 🎥")
+@app_commands.describe(watchparty="Select a watchparty to view its top 10 movies")
+async def list_top10(interaction: discord.Interaction, watchparty: str):
+    db = load_movie_db()
+    movies = db.get(watchparty)
 
-    def check_author(m):
-        return m.author == ctx.author and m.channel == ctx.channel
-
-    # Ask for category
-    await ctx.send("📂 Which watchparty category is this for? (e.g. Horror, Anime, SciFi)")
-
-    try:
-        category_msg = await bot.wait_for("message", timeout=30.0, check=check_author)
-        category = category_msg.content.strip().title()  # Format it nicely
-    except asyncio.TimeoutError:
-        await ctx.send("⏳ Timed out waiting for category. Try again later.")
+    if not movies:
+        await interaction.response.send_message(f"❌ No movies found in **{watchparty}**.", ephemeral=True)
         return
 
-    # Ask for movie title
-    await ctx.send(f"🎥 Great! Now tell me the movie title to add to **{category}**")
+    top_movies = movies[-10:][::-1]  # Newest first
 
-    try:
-        title_msg = await bot.wait_for("message", timeout=60.0, check=check_author)
-        title = title_msg.content.strip()
-    except asyncio.TimeoutError:
-        await ctx.send("⏳ Timed out waiting for movie title. Try again later.")
-        return
+    response = "\n\n".join(
+        f"🎬 **{m['title']}** ({m['year']})\nGenre: {m['genre']}\nAdded by: {m['added_by']}\n"
+        f"{m['poster'] if m['poster'] != 'N/A' else '🖼️ No poster available'}"
+        for m in top_movies
+    )
 
-    # Fetch from OMDb API
-    params = {"t": title, "apikey": OMDB_API_KEY}
+    await interaction.response.send_message(response)
+
+# Discord Auto complete Command for Top 10 List
+@list_top10.autocomplete("watchparty")
+async def autocomplete_watchparty_top(interaction: discord.Interaction, current: str):
+    return [
+        app_commands.Choice(name=wp, value=wp)
+        for wp in load_watchparties() if current.lower() in wp.lower()
+    ]
+
+# Add Movie with Search and Fallback of Search parameters
+@bot.tree.command(name="add_movie", description="Add a movie to your Watchparty 🏠")
+@app_commands.describe(watchparty="Choose a watchparty", movie_title="Enter the movie title")
+async def slash_add_movie(interaction: discord.Interaction, watchparty: str, movie_title: str):
+    await interaction.response.defer(thinking=True)
+
+    # Search using "s"
+    params = {"s": movie_title, "apikey": OMDB_API_KEY}
     response = requests.get("http://www.omdbapi.com/", params=params)
-    data = response.json()
+    search_results = response.json().get("Search", [])
 
-    if data.get("Response") == "False":
-        await ctx.send(f"😞 Couldn't find a movie called '{title}'.")
+    # Fallback if nothing found
+    if not search_results:
+        print("🔄 Falling back to exact lookup")
+        params = {"t": movie_title, "apikey": OMDB_API_KEY}
+        response = requests.get("http://www.omdbapi.com/", params=params)
+        data = response.json()
+
+        if data.get("Response") == "False":
+            await interaction.followup.send(f"❌ Couldn't find anything for '{movie_title}'.")
+            return
+
+        await insert_movie(interaction, watchparty, data)
         return
 
-    # Create movie object
+    # Show user options
+    choices = []
+    for i, result in enumerate(search_results[:5], 1):
+        title = result.get("Title", "Unknown")
+        year = result.get("Year", "Unknown")
+        poster = result.get("Poster", "🖼️ No poster")
+        choices.append(f"{i}. **{title}** ({year})\n{poster}")
+
+    await interaction.followup.send(
+        "🔍 Found multiple matches! Reply with the number of your pick:\n\n" + "\n\n".join(choices)
+    )
+
+    # Await reply
+    def check(m): return (
+        m.author == interaction.user and
+        m.channel == interaction.channel and
+        m.content.isdigit() and
+        1 <= int(m.content) <= len(search_results[:5])
+    )
+    try:
+        msg = await bot.wait_for("message", check=check, timeout=30)
+    except asyncio.TimeoutError:
+        await interaction.followup.send("⏰ Timed out—try again.")
+        return
+
+    chosen = search_results[int(msg.content) - 1]
+    imdb_id = chosen["imdbID"]
+    params = {"i": imdb_id, "apikey": OMDB_API_KEY}
+    final = requests.get("http://www.omdbapi.com/", params=params).json()
+
+    if final.get("Response") == "False":
+        await interaction.followup.send("😞 Couldn't load full details.")
+        return
+
+    await insert_movie(interaction, watchparty, final)   
+
+# Discord Auto complete Command for Watchparty Add Movies
+@slash_add_movie.autocomplete("watchparty")
+async def autocomplete_watchparty(interaction: discord.Interaction, current: str):
+    return [
+        app_commands.Choice(name=wp, value=wp)
+        for wp in load_watchparties() if current.lower() in wp.lower()
+    ]
+
+# Insert Movie Helper
+async def insert_movie(interaction, watchparty, data):
+    db = load_movie_db()
+
     movie = {
         "title": data.get("Title", "Untitled"),
         "year": data.get("Year", "Unknown"),
         "genre": data.get("Genre", "Unknown"),
         "poster": data.get("Poster", "N/A"),
-        "added_by": ctx.author.name
+        "added_by": interaction.user.name
     }
 
-    # Load and update movies.json
-    with open(MOVIE_DB_FILE, "r") as f:
-        movie_db = json.load(f)
+    if watchparty not in db:
+        db[watchparty] = []
 
-    if category not in movie_db:
-        movie_db[category] = []
-
-    movie_db[category].append(movie)
-
-    with open(MOVIE_DB_FILE, "w") as f:
-        json.dump(movie_db, f, indent=2)
-
-    # Confirmation message
-    await ctx.send(
-        f"✅ **{movie['title']}** ({movie['year']}) added to **{category}** by **{movie['added_by']}**\n"
-        f"Genre: {movie['genre']}\n"
-        f"{movie['poster'] if movie['poster'] != 'N/A' else '🖼️ No poster available'}"
-    )
-
-# 📋 Command: /list_movies [optional_category]
-@bot.command(name="list_movies")
-async def list_movies(ctx, *, category=None):
-    """
-    Lists movies from the JSON file.
-    If category is provided, shows only that section.
-    """
-    # Open the movie database
-    with open(MOVIE_DB_FILE, "r") as f:
-        data = json.load(f)
-
-    # If using new format (dict by category), handle accordingly
-    if isinstance(data, dict):
-        # If user requests a category
-        if category:
-            category = category.strip().title()  # e.g., "horror" → "Horror"
-            movies = data.get(category)
-            if not movies:
-                await ctx.send(f"😕 No movies found in the **{category}** category.")
-                return
-        else:
-            # No category specified—combine all movies
-            movies = []
-            for cat, entries in data.items():
-                for m in entries:
-                    m["watchparty"] = cat
-                    movies.append(m)
-    else:
-        # Legacy format fallback
-        movies = data
-
-    if not movies:
-        await ctx.send("📂 The movie list is empty.")
+    title_norm = movie["title"].lower().strip()
+    year_norm = movie["year"].strip()
+    if (title_norm, year_norm) in {
+        (entry["title"].lower().strip(), entry["year"].strip()) for entry in db[watchparty]
+    }:
+        await interaction.followup.send(
+            f"⚠️ **{movie['title']}** ({movie['year']}) is already in **{watchparty}**!"
+        )
         return
 
-    # 💬 Build the response text
-    response = "🎃 **HorrorWatch Queue** 🎬\n\n"
-    for idx, m in enumerate(movies, 1):
-        title = m.get("title", "Untitled")
-        year = m.get("year", "Unknown Year")
-        genre = m.get("genre", None)
-        watchparty = m.get("watchparty", None)
+    db[watchparty].append(movie)
+    save_movie_db(db)
 
-    response += f"**{idx}. {title}** ({year})\n"
-    if genre:
-        response += f"   _{genre}_\n"
-    if watchparty:
-        response += f"   Category: `{watchparty}`\n"
-    response += "\n"
+    await interaction.followup.send(
+        f"✅ **{movie['title']}** ({movie['year']}) added to **{watchparty}** by **{movie['added_by']}**\n"
+        f"Genre: {movie['genre']}\n"
+        f"{movie['poster'] if movie['poster'] != 'N/A' else '🖼️ No poster available'}"
+    )    
 
-    # Split message if too long for Discord
-    if len(response) > 2000:
-        await ctx.send("📄 Movie list too long! Consider filtering by category.")
-    else:
-        await ctx.send(response)
-
-# 🧃 Launch the bot!
+# Bot Run
 bot.run(DISCORD_TOKEN)
