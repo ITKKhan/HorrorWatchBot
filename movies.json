@@ -57,31 +57,10 @@
       "added_by": "itk_khan"
     },
     {
-      "title": "Night Shift",
-      "year": "1982",
-      "genre": "Comedy",
-      "poster": "https://m.media-amazon.com/images/M/MV5BNzNlNTYwN2EtNWY5OC00ZmU2LWE4MGEtYjYxMDZiNjcxMWE3XkEyXkFqcGc@._V1_SX300.jpg",
-      "added_by": "itk_khan"
-    },
-    {
       "title": "Please Don't Feed the Children",
       "year": "2024",
       "genre": "Horror, Thriller",
       "poster": "https://m.media-amazon.com/images/M/MV5BZTEyMTMzZmUtOWU0NS00MzRhLWFjNzAtYzIzMTk3YTcxZjhhXkEyXkFqcGc@._V1_SX300.jpg",
-      "added_by": "itk_khan"
-    },
-    {
-      "title": "Untitled",
-      "year": "Unknown",
-      "genre": "Unknown",
-      "poster": "N/A",
-      "added_by": "itk_khan"
-    },
-    {
-      "title": "Night Shift",
-      "year": "2023",
-      "genre": "Horror, Thriller",
-      "poster": "https://m.media-amazon.com/images/M/MV5BODE1NzhiYTItNDQ4MC00ZDUwLThjNWUtYjBkYWVmZWMwMzQ0XkEyXkFqcGc@._V1_SX300.jpg",
       "added_by": "itk_khan"
     },
     {
@@ -103,6 +82,34 @@
       "year": "2024",
       "genre": "Drama, Horror, Sci-Fi",
       "poster": "https://m.media-amazon.com/images/M/MV5BZDQ1NGE5MGMtYzdlZC00ODExLWJlMDMtNWU4NjA5OWYwMDEwXkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Night Shift",
+      "year": "2023",
+      "genre": "Horror, Thriller",
+      "poster": "https://m.media-amazon.com/images/M/MV5BODE1NzhiYTItNDQ4MC00ZDUwLThjNWUtYjBkYWVmZWMwMzQ0XkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Alien: Covenant",
+      "year": "2017",
+      "genre": "Horror, Sci-Fi, Thriller",
+      "poster": "https://m.media-amazon.com/images/M/MV5BMjhiYWQ4MTAtOGY1Zi00ZjcyLTk1ZDYtODI3ODRhNjE4MzZhXkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Alien: Resurrection",
+      "year": "1997",
+      "genre": "Action, Horror, Sci-Fi",
+      "poster": "https://m.media-amazon.com/images/M/MV5BNDMyNmU5ZGQtNzhiZi00NjRjLTk3NGUtMmQ5YWU4ODlkNTBhXkEyXkFqcGc@._V1_SX300.jpg",
+      "added_by": "itk_khan"
+    },
+    {
+      "title": "Alien: Romulus",
+      "year": "2024",
+      "genre": "Horror, Sci-Fi, Thriller",
+      "poster": "https://m.media-amazon.com/images/M/MV5BMDU0NjcwOGQtNjNjOS00NzQ3LWIwM2YtYWVmODZjMzQzN2ExXkEyXkFqcGc@._V1_SX300.jpg",
       "added_by": "itk_khan"
     }
   ],
