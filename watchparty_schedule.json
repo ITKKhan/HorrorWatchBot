@@ -1,0 +1,26 @@
+{
+    "Horror": {
+        "day": "Friday",
+        "last_updated": "2025-07-12T04:31:48.781542",
+        "top_3": [
+            {
+                "title": "The Thing",
+                "votes": 1,
+                "percent": 33,
+                "streaming": "N/A"
+            },
+            {
+                "title": "Scream",
+                "votes": 1,
+                "percent": 33,
+                "streaming": "N/A"
+            },
+            {
+                "title": "Alien",
+                "votes": 1,
+                "percent": 33,
+                "streaming": "N/A"
+            }
+        ]
+    }
+}

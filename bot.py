@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import json, os, requests, asyncio
 from dotenv import load_dotenv
+from watchparty_vote import WatchpartyVote
 
 #Environment and Setup
 load_dotenv()
@@ -14,7 +15,7 @@ WATCHPARTY_FILE = "categories.json"
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix="/", intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 #Helper Functions 
 def load_watchparties():
@@ -43,8 +44,21 @@ def save_movie_db(db):
 @bot.event
 async def on_ready():
     print("🔥 on_ready fired!")
-    synced = await bot.tree.sync()
-    print(f"✅ Synced {len(synced)} slash command(s): {[cmd.name for cmd in synced]}")
+
+    # Load your WatchpartyVote Cog properly
+    await bot.add_cog(WatchpartyVote(bot))
+
+    # Optionally sync app commands here if you're mixing slash and prefix
+    try:
+        synced = await bot.tree.sync()
+        print(f"✅ Synced {len(synced)} slash command(s)")
+    except Exception as e:
+        print(f"Error syncing commands: {e}")
+
+#Error Visibility for silent command errors
+@bot.event
+async def on_command_error(ctx, error):
+    print(f"Command error: {error}")
 
 # Mention-Handling Code for Discord Bot to handle @ request to explain functionality
 @bot.event
@@ -325,3 +339,6 @@ async def insert_movie(interaction, watchparty, data):
 
 # Bot Run
 bot.run(DISCORD_TOKEN)
+@bot.event
+async def on_ready():
+    print(f"Bot is ready! Logged in as {bot.user}")
